@@ -52,7 +52,6 @@
 | **Feed Fish** | 좌클릭 (수면 클릭) | 화면 탭 (Tap) |
 
 ---
-
 ## Performance Metrics (성능 지표)
 *Test Device: Galaxy Z Fold7*
-[![Legion Core](https://img.youtube.com/vi/I2nAi2pYHeQ/maxresdefault.jpg)](https://www.youtube.com/shorts/I2nAi2pYHeQ)
+[![Legion Core](https://img.youtube.com/vi/J--UmX4KyIo/maxresdefault.jpg)](https://youtube.com/shorts/J--UmX4KyIo)
