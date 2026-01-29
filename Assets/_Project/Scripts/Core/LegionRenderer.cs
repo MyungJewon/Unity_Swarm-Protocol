@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using Unity.Collections;
@@ -7,12 +8,11 @@ using System.Collections.Generic;
 
 public class LegionRenderer : MonoBehaviour
 {
+
     [Header("Settings")]
     public int instanceCount = 10000;
     public Mesh[] unitMeshes;
     public Material unitMaterial;
-    public Vector2 spawnArea = new Vector2(50, 50);
-    
     [Header("Movement")]
     public Transform targetTransform;
     public float minMoveSpeed = 10.0f;
@@ -23,6 +23,7 @@ public class LegionRenderer : MonoBehaviour
     public float cellSize = 2.0f;       
     public float avoidanceRadius = 1.5f; 
     public float avoidanceWeight = 2.0f; 
+    
     [Header("Boundary Settings")]
     public Vector3 tankSize = new Vector3(50, 30, 50);
     public float boundaryForce = 5.0f;
@@ -42,12 +43,23 @@ public class LegionRenderer : MonoBehaviour
     private NativeArray<float> moveSpeeds; 
     private NativeParallelMultiHashMap<int, int> gridMap;
 
-    void Start() { InitializeBuffers(); }
+    private void Awake()
+    {
+        QualitySettings.vSyncCount = 0;
+        Application.targetFrameRate = 120;
+    }
+
+    void Start()
+    {
+        InitializeBuffers();
+    }
+    
     void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireCube(Vector3.zero, tankSize * 2);
+        Gizmos.DrawWireCube(transform.position, tankSize * 2);
     }
+
     void Update()
     {
         if (unitMeshes == null || unitMeshes.Length == 0 || unitMaterial == null) return;
@@ -76,10 +88,9 @@ public class LegionRenderer : MonoBehaviour
             avoidanceRadius = avoidanceRadius,
             avoidanceWeight = avoidanceWeight,
             gridMap = gridMap,
-            
+            centerPosition = (float3)transform.position, 
             boundarySize = (float3)tankSize,
             boundaryWeight = boundaryForce,
-
             positions = positions,
             rotations = rotations,
             unitDataBuffer = unitDataArray
@@ -100,8 +111,7 @@ public class LegionRenderer : MonoBehaviour
                 }
             }
         }
-        // ---------------------------------------------------------
-
+        
         unitBuffer.SetData(unitDataArray);
         MaterialPropertyBlock props = new MaterialPropertyBlock();
         int currentStartIndex = 0;
@@ -162,11 +172,18 @@ public class LegionRenderer : MonoBehaviour
         unitDataArray = new NativeArray<UnitData>(instanceCount, Allocator.Persistent);
         gridMap = new NativeParallelMultiHashMap<int, int>(instanceCount, Allocator.Persistent);
         moveSpeeds = new NativeArray<float>(instanceCount, Allocator.Persistent);
+        
+        float3 center = (float3)transform.position;
 
         var initData = new UnitData[instanceCount];
         for (int i = 0; i < instanceCount; i++)
         {
-            float3 pos = new float3(UnityEngine.Random.Range(-spawnArea.x, spawnArea.x), UnityEngine.Random.Range(-spawnArea.x, spawnArea.x), UnityEngine.Random.Range(-spawnArea.y, spawnArea.y));
+            float3 pos = new float3(
+                center.x + UnityEngine.Random.Range(-tankSize.x, tankSize.x),
+                center.y + UnityEngine.Random.Range(-tankSize.y, tankSize.y),
+                center.z + UnityEngine.Random.Range(-tankSize.z, tankSize.z)
+            );
+
             quaternion rot = quaternion.Euler(0, UnityEngine.Random.Range(0, 360), 0);
             positions[i] = pos;
             rotations[i] = rot;

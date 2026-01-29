@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class SwarmController : MonoBehaviour
 {
@@ -15,15 +16,19 @@ public class SwarmController : MonoBehaviour
 
     void Update()
     {
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject()) return;
+        if (Input.touchCount > 0 && EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
         if (CameraRig.Instance != null && CameraRig.Instance.isDragging) return;
-
         if (Input.GetMouseButtonUp(0))
         {
             SpawnFood();
         }
+
+        // 4. 먹이 위치 동기화
         if (legion.hasFood && currentFoodVisual != null)
         {
             targetObj.position = currentFoodVisual.transform.position;
+
             if (legion.gatheredCount >= requiredFishCount)
             {
                 RemoveFood();
@@ -44,7 +49,9 @@ public class SwarmController : MonoBehaviour
         {
             targetObj.position = hit.point;
             legion.hasFood = true;
+
             if (currentFoodVisual != null) Destroy(currentFoodVisual);
+
             if (foodPrefab != null)
             {
                 currentFoodVisual = Instantiate(foodPrefab, hit.point, Quaternion.identity);
@@ -54,9 +61,7 @@ public class SwarmController : MonoBehaviour
 
     void RemoveFood()
     {
-        Debug.Log("냠냠! 먹이를 다 먹었습니다.");
         legion.hasFood = false;
-        
         if (currentFoodVisual != null)
         {
             Destroy(currentFoodVisual);

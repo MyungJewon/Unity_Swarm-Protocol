@@ -5,27 +5,33 @@ public class CameraRig : MonoBehaviour
     public static CameraRig Instance;
 
     [Header("Target Settings")]
-    public Transform pivot;
-    public Vector3 pivotOffset = Vector3.zero;
+    public Transform targetObj;
+    public Vector3 targetOffset = new Vector3(0, 1, 0);
 
-    [Header("Control Settings")]
-    public float rotateSpeed = 5.0f;
-    public float zoomSpeed = 10.0f;
-    public float minDistance = 10f;
-    public float maxDistance = 200f;
-    public float yMinLimit = 10f;
+    [Header("Distance Settings")]
+    public float distance = 20.0f;
+    public float minDistance = 5.0f;
+    public float maxDistance = 60.0f;
+    public float zoomSpeed = 2.0f;
+    public float zoomDampening = 5.0f;
+
+    [Header("Rotation Settings")]
+    public float xSpeed = 200.0f;
+    public float ySpeed = 200.0f;
+    public float yMinLimit = -20f;
     public float yMaxLimit = 80f;
+    public float rotationDampening = 5.0f;
 
-    [Header("Status")]
-    public bool isDragging = false;
+    private float xDeg = 0.0f;
+    private float yDeg = 0.0f;
+    private float currentDistance;
+    private float desiredDistance;
+    private Quaternion currentRotation;
+    private Quaternion desiredRotation;
+    private Quaternion rotation;
+    private Vector3 position;
 
-    private float x = 0.0f;
-    private float y = 0.0f;
-    private float currentDistance = 100f;
-
-    private Vector3 lastMousePosition;
-    private float dragThreshold = 5f;
-    private float totalDragDistance = 0f;
+    public bool isDragging { get; private set; }
 
     void Awake()
     {
@@ -34,62 +40,67 @@ public class CameraRig : MonoBehaviour
 
     void Start()
     {
-        Vector3 angles = transform.eulerAngles;
-        x = angles.y;
-        y = angles.x;
+        InitCamera();
+    }
 
-        if (pivot != null)
+    void InitCamera()
+    {
+        if (!targetObj)
         {
-            currentDistance = Vector3.Distance(transform.position, pivot.position);
+            GameObject go = new GameObject("Cam Target");
+            go.transform.position = transform.position + (transform.forward * distance);
+            targetObj = go.transform;
         }
+
+        distance = Vector3.Distance(transform.position, targetObj.position);
+        currentDistance = distance;
+        desiredDistance = distance;
+
+        position = transform.position;
+        rotation = transform.rotation;
+        currentRotation = transform.rotation;
+        desiredRotation = transform.rotation;
+
+        xDeg = Vector3.Angle(Vector3.right, transform.right);
+        yDeg = Vector3.Angle(Vector3.up, transform.up);
     }
 
     void LateUpdate()
     {
-        if (pivot == null) return;
-
+        if (!targetObj) return;
         HandleInput();
-        UpdateCameraPosition();
+        CalculatePosition();
     }
 
     void HandleInput()
     {
-        if (Input.GetMouseButtonDown(0))
+        isDragging = false;
+        if (Input.GetMouseButton(0) || Input.GetMouseButton(1))
         {
-            lastMousePosition = Input.mousePosition;
-            totalDragDistance = 0f;
-            isDragging = false;
-        }
+            float dx = Input.GetAxis("Mouse X");
+            float dy = Input.GetAxis("Mouse Y");
 
-        if (Input.GetMouseButton(0))
-        {
-            if (Input.touchCount >= 2) return;
-
-            Vector3 delta = Input.mousePosition - lastMousePosition;
-            totalDragDistance += delta.magnitude;
-            if (totalDragDistance > dragThreshold)
+            if (Mathf.Abs(dx) > 0.01f || Mathf.Abs(dy) > 0.01f)
             {
                 isDragging = true;
+                xDeg += dx * xSpeed * 0.02f;
+                yDeg -= dy * ySpeed * 0.02f;
             }
-
-            if (isDragging)
-            {
-                x += Input.GetAxis("Mouse X") * rotateSpeed;
-                y -= Input.GetAxis("Mouse Y") * rotateSpeed;
-                y = Mathf.Clamp(y, yMinLimit, yMaxLimit);
-            }
-
-            lastMousePosition = Input.mousePosition;
         }
-
-        if (Input.GetMouseButtonUp(0))
+        else if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {
-            Invoke("ResetDrag", 0.05f);
+            Vector2 delta = Input.GetTouch(0).deltaPosition;
+            if (delta.sqrMagnitude > 1.0f) 
+            {
+                isDragging = true;
+                xDeg += delta.x * xSpeed * 0.005f;
+                yDeg -= delta.y * ySpeed * 0.005f;
+            }
         }
 
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (Input.touchCount == 2)
         {
+            isDragging = true;
             Touch touchZero = Input.GetTouch(0);
             Touch touchOne = Input.GetTouch(1);
 
@@ -100,28 +111,37 @@ public class CameraRig : MonoBehaviour
             float touchDeltaMag = (touchZero.position - touchOne.position).magnitude;
 
             float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
-            
-            scroll = -deltaMagnitudeDiff * 0.01f;
-            isDragging = true;
+            desiredDistance += deltaMagnitudeDiff * zoomSpeed * 0.01f;
         }
-        if (Mathf.Abs(scroll) > 0.001f)
+        else
         {
-            currentDistance -= scroll * zoomSpeed;
-            currentDistance = Mathf.Clamp(currentDistance, minDistance, maxDistance);
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (Mathf.Abs(scroll) > 0.01f)
+            {
+                desiredDistance -= scroll * Time.deltaTime * zoomSpeed * Mathf.Abs(desiredDistance);
+            }
         }
+
+        yDeg = ClampAngle(yDeg, yMinLimit, yMaxLimit);
+        desiredDistance = Mathf.Clamp(desiredDistance, minDistance, maxDistance);
     }
 
-    void UpdateCameraPosition()
+    void CalculatePosition()
     {
-        Quaternion rotation = Quaternion.Euler(y, x, 0);
-        Vector3 position = rotation * new Vector3(0.0f, 0.0f, -currentDistance) + (pivot.position + pivotOffset);
+        desiredRotation = Quaternion.Euler(yDeg, xDeg, 0);
+        currentRotation = Quaternion.Lerp(currentRotation, desiredRotation, Time.deltaTime * rotationDampening);
+        currentDistance = Mathf.Lerp(currentDistance, desiredDistance, Time.deltaTime * zoomDampening);
 
-        transform.rotation = rotation;
+        position = targetObj.position - (currentRotation * Vector3.forward * currentDistance + targetOffset);
+
         transform.position = position;
+        transform.rotation = currentRotation;
     }
 
-    void ResetDrag()
+    private static float ClampAngle(float angle, float min, float max)
     {
-        isDragging = false;
+        if (angle < -360) angle += 360;
+        if (angle > 360) angle -= 360;
+        return Mathf.Clamp(angle, min, max);
     }
 }

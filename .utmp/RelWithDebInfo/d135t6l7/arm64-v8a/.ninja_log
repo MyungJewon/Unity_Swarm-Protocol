@@ -1,0 +1,21 @@
+# ninja log v5
+494	666	7913877816179007	D:/UnityProject/Unity_Swarm-Protocol/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/d135t6l7/obj/arm64-v8a/libswappywrapper.so	e760cc2f4692072f
+6	1373	7913877823293817	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	33d9cdc40621360
+63	492	7913877814516032	FramePacing/CMakeFiles/swappywrapper.dir/UnitySwappyWrapper.cpp.o	6346bd2a27c4154
+31	1071	7913877820294046	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	77b9ac098d40d04b
+24	1076	7913877820314360	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	337d1c774b074a39
+53	1289	7913877822484262	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	c19650a1a3e999eb
+0	1092	7913877820495783	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	2a1229beb6fb4c88
+12	1146	7913877821028753	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	b06e310e16e51975
+41	1106	7913877820628171	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	bfb24ab2f4d7b849
+18	1303	7913877822600509	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	e51418a9f06795b8
+1373	1443	7913877824020747	D:/UnityProject/Unity_Swarm-Protocol/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/d135t6l7/obj/arm64-v8a/libgame.so	e9c4ef6adf36a56
+52	1161	7913901747337530	GameActivity/CMakeFiles/game.dir/UGAInputKeyEvent.cpp.o	77b9ac098d40d04b
+14	1163	7913901747327519	GameActivity/CMakeFiles/game.dir/UGAEntry.cpp.o	337d1c774b074a39
+29	1218	7913901747881452	GameActivity/CMakeFiles/game.dir/UGAConfiguration.cpp.o	2a1229beb6fb4c88
+70	1249	7913901748205486	GameActivity/CMakeFiles/game.dir/UGAInputMotionEvent.cpp.o	bfb24ab2f4d7b849
+39	1279	7913901748552525	GameActivity/CMakeFiles/game.dir/UGADebug.cpp.o	b06e310e16e51975
+46	1309	7913901748849267	GameActivity/CMakeFiles/game.dir/UGASoftKeyboard.cpp.o	c19650a1a3e999eb
+60	1466	7913901750429557	GameActivity/CMakeFiles/game.dir/UGAInput.cpp.o	e51418a9f06795b8
+7	1523	7913901750969106	GameActivity/CMakeFiles/game.dir/UGAApplication.cpp.o	33d9cdc40621360
+1524	1622	7913901751987521	D:/UnityProject/Unity_Swarm-Protocol/Library/Bee/Android/Prj/IL2CPP/Gradle/unityLibrary/build/intermediates/cxx/RelWithDebInfo/d135t6l7/obj/arm64-v8a/libgame.so	e9c4ef6adf36a56

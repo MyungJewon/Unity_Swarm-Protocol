@@ -126,4 +126,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FoodBehaviour
   sinkSpeed: 1.5
-  bottomLimit: -15
+  bottomLimit: 65
