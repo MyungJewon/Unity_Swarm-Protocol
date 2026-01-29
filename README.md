@@ -54,4 +54,4 @@
 ---
 ## Performance Metrics (성능 지표)
 *Test Device: Galaxy Z Fold7*
-[![Legion Core](https://img.youtube.com/vi/J--UmX4KyIo/maxresdefault.jpg)](https://youtube.com/shorts/J--UmX4KyIo)
+[![Legion Core](https://img.youtube.com/vi/J--UmX4KyIo/hqdefault.jpg)](https://youtube.com/shorts/J--UmX4KyIo)
