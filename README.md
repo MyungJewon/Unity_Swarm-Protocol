@@ -12,6 +12,8 @@
 **Legion Core**는 모바일 디바이스의 하드웨어 한계를 시험하고 극복하기 위해 개발된 **대규모 실시간 군집 시뮬레이션 프로젝트**입니다.
 기존의 데이터 지향 기술 스택(DOTS) 기반 렌더링에 **사용자 상호작용(Interaction)**을 더하여, 10,000마리의 물고기가 유저의 입력에 반응하고 먹이를 쫓는 **3D 수족관**을 구현했습니다.
 
+작업기간 : 2026.01.24 ~ 2026.01.29
+
 ### Key Objectives & Features
 * **Massive Rendering:** GPU Instancing(`DrawMeshInstancedIndirect`)을 활용하여 10,000+ 객체를 단일 드로우 콜로 처리.
 * **High Performance Simulation:** Unity Job System과 Burst Compiler로 이동, 회전, 회피 연산을 병렬 처리.
